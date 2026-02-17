@@ -62,3 +62,35 @@ async def get_students(token: str = Depends(verify_token)):
 @app.get("/gateway/courses")
 async def get_courses(token: str = Depends(verify_token)):
     return await forward_request("course", "/api/courses", "GET")
+
+# --- අමතර Student Routes (Activity 1 & 2 යටතේ) ---
+
+# Student කෙනෙක්ව ID එකෙන් සෙවීම (Protected)
+@app.get("/gateway/students/{student_id}")
+async def get_student_by_id(student_id: int, token: str = Depends(verify_token)):
+    return await forward_request("student", f"/api/students/{student_id}", "GET")
+
+# අලුත් Student කෙනෙක් create කිරීම (Protected)
+@app.post("/gateway/students")
+async def create_student(request: Request, token: str = Depends(verify_token)):
+    try:
+        body = await request.json()
+    except Exception:
+        body = None
+    return await forward_request("student", "/api/students", "POST", json=body)
+
+# --- Update & Delete Student Routes ---
+
+# ශිෂ්‍යයෙකුගේ විස්තර යාවත්කාලීන කිරීම (Protected)
+@app.put("/gateway/students/{student_id}")
+async def update_student(student_id: int, request: Request, token: str = Depends(verify_token)):
+    try:
+        body = await request.json()
+    except Exception:
+        body = None
+    return await forward_request("student", f"/api/students/{student_id}", "PUT", json=body)
+
+# ශිෂ්‍යයෙකු පද්ධතියෙන් ඉවත් කිරීම (Protected)
+@app.delete("/gateway/students/{student_id}")
+async def delete_student(student_id: int, token: str = Depends(verify_token)):
+    return await forward_request("student", f"/api/students/{student_id}", "DELETE")

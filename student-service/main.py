@@ -38,6 +38,17 @@ def create_student(student: StudentCreate):
         return student_service.create(student)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to create student: {str(e)}")
+    
+# පවතින ශිෂ්‍යයෙකුගේ විස්තර වෙනස් කිරීම (Update)
+@app.put("/api/students/{student_id}", response_model=Student)
+def update_student(student_id: int, student_update: StudentUpdate):
+    updated_student = student_service.update(student_id, student_update)
+    if not updated_student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Student with ID {student_id} not found to update"
+        )
+    return updated_student    
 
 @app.delete("/api/students/{student_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_student(student_id: int):
